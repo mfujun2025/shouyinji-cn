@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>收音机 - 在线网络收音机｜电台直播在线收听_收音机.cn</title>
+<meta name="description" content="收音机.cn 免费网络收音机，无需下载App打开即听：中国之声、央广新闻、音乐电台、交通广播、城市广播，以及全球上万家中英文电台直播，支持搜索与收藏，电脑手机都可用。">
+<meta name="keywords" content="收音机,网络收音机,在线收音机,电台直播,听广播,广播电台,在线听电台,中国之声,音乐电台,新闻广播,FM在线收听,网络电台">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://xn--wbvu8bd34f.cn/">
+<meta property="og:title" content="收音机.cn - 在线网络收音机">
+<meta property="og:description" content="免费在线听全球电台直播：中文电台、音乐、新闻、交通广播，打开即听。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://xn--wbvu8bd34f.cn/">
+<meta name="theme-color" content="#1f2937">
+<style>
+  :root{
+    --bg:#0f172a; --panel:#1e293b; --panel2:#273449; --line:#334155;
+    --txt:#e2e8f0; --sub:#94a3b8; --accent:#f59e0b; --accent2:#ef4444;
+    --ok:#22c55e; --radius:12px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;line-height:1.6;min-height:100vh}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 16px 140px}
+  header{padding:28px 0 10px;text-align:center;position:relative}
+  .logo{display:inline-flex;align-items:center;gap:10px;font-size:26px;font-weight:800;color:var(--txt);text-decoration:none}
+  .logo .ico{width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fbbf24,#b45309);display:inline-flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 4px 18px rgba(245,158,11,.35)}
+  .slogan{color:var(--sub);font-size:14px;margin-top:6px}
+  .search{max-width:560px;margin:18px auto 0;position:relative}
+  .search input{width:100%;padding:12px 44px 12px 16px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--txt);font-size:15px;outline:none;transition:border .2s}
+  .search input:focus{border-color:var(--accent)}
+  .search .sbtn{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:var(--accent);border:none;border-radius:50%;width:32px;height:32px;color:#111;cursor:pointer;font-size:15px}
+  nav{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:18px 0 8px}
+  .tab{padding:7px 16px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--sub);cursor:pointer;font-size:13.5px;transition:all .15s}
+  .tab:hover{color:var(--txt);border-color:var(--accent)}
+  .tab.on{background:var(--accent);color:#111;border-color:var(--accent);font-weight:600}
+  .status{text-align:center;color:var(--sub);font-size:13px;padding:10px 0;min-height:24px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-top:6px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px;display:flex;gap:12px;align-items:center;cursor:pointer;transition:transform .12s,box-shadow .12s;position:relative}
+  .card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.35);border-color:var(--accent)}
+  .card.playing{border-color:var(--accent);background:var(--panel2)}
+  .card.playing::after{content:"▶ 播放中";position:absolute;top:-1px;right:12px;background:var(--accent);color:#111;font-size:10.5px;padding:2px 8px;border-radius:0 0 8px 8px;font-weight:600}
+  .ava{width:46px;height:46px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:19px;color:#fff;background:linear-gradient(135deg,#3b82f6,#8b5cf6);overflow:hidden}
+  .ava img{width:100%;height:100%;object-fit:cover}
+  .meta{min-width:0}
+  .meta .nm{font-size:14.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .meta .tg{font-size:12px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+  .meta .ct{font-size:11.5px;color:#7dd3fc;margin-top:2px}
+  .empty{text-align:center;color:var(--sub);padding:40px 0}
+  .player{position:fixed;left:0;right:0;bottom:0;background:rgba(15,23,42,.97);border-top:1px solid var(--line);backdrop-filter:blur(8px);z-index:50;padding:10px 16px 12px}
+  .player .in{max-width:1080px;margin:0 auto;display:flex;align-items:center;gap:14px}
+  .pbtn{width:46px;height:46px;border-radius:50%;border:none;background:var(--accent);color:#111;font-size:18px;cursor:pointer;flex:none}
+  .pinfo{flex:1;min-width:0}
+  .pinfo .pn{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pinfo .ps{font-size:12px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .vol{display:flex;align-items:center;gap:8px;flex:none;color:var(--sub);font-size:13px}
+  .vol input{width:100px}
+  .bar{height:3px;background:var(--line);border-radius:2px;margin-top:6px;overflow:hidden}
+  .bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
+  footer{margin-top:34px;border-top:1px solid var(--line);padding:22px 0 10px;color:var(--sub);font-size:13px}
+  footer h2{font-size:16px;color:var(--txt);margin:14px 0 8px}
+  footer p{margin:6px 0}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .tags span{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:3px 10px;font-size:12px;color:var(--sub)}
+  .toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:#111827;border:1px solid var(--line);color:var(--txt);padding:9px 18px;border-radius:8px;font-size:13px;z-index:99;opacity:0;transition:opacity .25s;pointer-events:none}
+  .toast.show{opacity:1}
+  @media(max-width:640px){ .vol input{width:64px} .grid{grid-template-columns:1fr 1fr} .card{padding:10px} .pinfo .ps{display:none} }
+</style>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"WebSite",
+  "name":"收音机.cn",
+  "alternateName":"网络收音机",
+  "url":"https://xn--wbvu8bd34f.cn/",
+  "inLanguage":"zh-CN",
+  "description":"免费在线网络收音机，收听中国及全球电台直播。"
+}
+</script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="logo" href="/"><span class="ico">📻</span><span>收音机.cn</span></a>
+    <p class="slogan">免费网络收音机 · 无需下载 · 打开即听 · 全球电台直播</p>
+    <div class="search">
+      <input id="kw" type="text" placeholder="搜索电台，如：中国之声、音乐、新闻…" autocomplete="off">
+      <button class="sbtn" id="sbtn" aria-label="搜索">🔍</button>
+    </div>
+    <nav id="tabs">
+      <button class="tab on" data-query="chinese">中文电台</button>
+      <button class="tab" data-query="china">中国大陆</button>
+      <button class="tab" data-query="hot">全球热门</button>
+      <button class="tab" data-query="music">音乐电台</button>
+      <button class="tab" data-query="news">新闻电台</button>
+      <button class="tab" data-query="fav">我的收藏</button>
+    </nav>
+  </header>
+  <div class="status" id="status">正在加载电台列表…</div>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty" hidden>暂无电台，换个关键词试试。</div>
+
+  <footer>
+    <h2>关于在线收音机</h2>
+    <p>收音机.cn 是一个免费的在线网络收音机平台，聚合了互联网上公开的广播电台直播流。无论你是想收听中国之声、央广新闻、城市音乐电台、交通广播，还是想收听海外的中文电台和英文电台，都可以在这里一键直达。网页收音机无需安装任何 App，电脑、手机、平板打开浏览器即可收听。</p>
+    <h2>热门电台分类</h2>
+    <div class="tags" id="tagcloud">
+      <span>在线收音机</span><span>网络收音机</span><span>电台直播</span><span>听广播</span><span>中国之声</span><span>央广新闻</span><span>音乐电台</span><span>新闻广播</span><span>交通广播</span><span>城市广播</span><span>FM在线收听</span><span>英文电台</span><span>全球电台</span><span>网络电台</span><span>广播电台</span><span>新闻联播</span><span>歌曲电台</span><span>经典老歌</span>
+    </div>
+    <p style="margin-top:12px">电台数据由社区维护的 <a href="https://www.radio-browser.info" rel="nofollow noopener" target="_blank" style="color:#7dd3fc">radio-browser.info</a> 提供，音频流来自各广播电台公开频道。如遇电台无法播放，请切换其他频道或稍后再试。</p>
+    <p style="margin-top:8px">© 2026 收音机.cn 版权所有</p>
+  </footer>
+</div>
+
+<div class="player" id="player" hidden>
+  <div class="in">
+    <button class="pbtn" id="pp" aria-label="播放/暂停">▶</button>
+    <div class="pinfo">
+      <div class="pn" id="pname">未播放</div>
+      <div class="ps" id="psub">点击下方任意电台开始收听</div>
+    </div>
+    <div class="vol">音量 <input type="range" id="vol" min="0" max="100" value="80"></div>
+  </div>
+  <div class="bar"><i id="pbar"></i></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="stations.js"></script>
+<script>
+(function(){
+  "use strict";
+  var API_HOSTS=["https://de1.api.radio-browser.info","https://at1.api.radio-browser.info","https://nl1.api.radio-browser.info"];
+  var grid=document.getElementById('grid'),statusEl=document.getElementById('status'),emptyEl=document.getElementById('empty');
+  var kw=document.getElementById('kw'),player=document.getElementById('player'),audio=new Audio();
+  var pname=document.getElementById('pname'),psub=document.getElementById('psub'),pp=document.getElementById('pp');
+  var pbar=document.getElementById('pbar'),toast=document.getElementById('toast');
+  var favs=JSON.parse(localStorage.getItem('shouyinji_favs')||'[]');
+  var current=null,toastTimer=null,searchTimer=null;
+
+  function esc(s){s=(s==null)?'':String(s);return s.replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function colorOf(name){var h=0,n=(name||'台').toString();for(var i=0;i<n.length;i++){h=(h*31+n.charCodeAt(i))>>>0;}return 'hsl('+(h%360)+',70%,55%)';}
+  function showToast(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(function(){toast.classList.remove('show');},2600);}
+  function setStatus(t){statusEl.textContent=t;}
+  function toRadios(r){return r.map(function(s){return{name:s.name||'未知电台',url:s.url_resolved||s.url,country:s.country_code||'',tags:(s.tags||'').split(',').slice(0,3).join(' · ')||'',favicon:s.favicon||'',votes:s.votes||0,home:s.homepage||''};});}
+
+  function apiFetch(path){
+    return new Promise(function(resolve,reject){
+      var i=0,lastErr=null;
+      (function attempt(){
+        if(i>=API_HOSTS.length){reject(lastErr||new Error('api failed'));return;}
+        var ctrl=new AbortController();
+        var t=setTimeout(function(){ctrl.abort();},9000);
+        fetch(API_HOSTS[i]+path,{signal:ctrl.signal,headers:{'Accept':'application/json'}})
+          .then(function(r){clearTimeout(t);if(!r.ok){throw new Error('HTTP '+r.status);}return r.json();})
+          .then(resolve)
+          .catch(function(e){clearTimeout(t);lastErr=e;i++;attempt();});
+      })();
+    });
+  }
+
+  function loadStations(params){
+    setStatus('正在加载…');emptyEl.hidden=true;grid.innerHTML='';
+    var q='';
+    if(params.kw!==undefined){q='/json/stations/search?name='+encodeURIComponent(params.kw)+'&order=votes&reverse=true&limit=40&hidebroken=true';}
+    else if(params.lang){q='/json/stations/search?language='+encodeURIComponent(params.lang)+'&order=votes&reverse=true&limit=40&hidebroken=true';}
+    else if(params.cc){q='/json/stations/search?countrycode='+encodeURIComponent(params.cc)+'&order=votes&reverse=true&limit=40&hidebroken=true';}
+    else if(params.tag){q='/json/stations/search?tag='+encodeURIComponent(params.tag)+'&order=votes&reverse=true&limit=40&hidebroken=true';}
+    else {q='/json/stations/search?order=votes&reverse=true&limit=40&hidebroken=true';}
+    apiFetch(q).then(function(r){
+      var list=toRadios(r);
+      if(!list.length){emptyEl.hidden=false;setStatus('未找到电台');return;}
+      render(list);setStatus('共 '+list.length+' 个电台 · 点击卡片即可收听');
+    }).catch(function(){
+      // API 不可用时的兜底电台
+      render(FALLBACK_STATIONS);
+      setStatus('在线电台库暂时不可用，已显示内置备用电台');
+    });
+  }
+
+  function render(list){
+    grid.innerHTML='';
+    list.forEach(function(s,i){
+      var card=document.createElement('div');
+      card.className='card'+(current&&current.url===s.url?' playing':'');
+      var ava=s.favicon&&s.favicon.indexOf('http')===0?'<img src="'+esc(s.favicon)+'" alt="" loading="lazy" referrerpolicy="no-referrer">':esc((s.name||'台').charAt(0));
+      card.innerHTML='<div class="ava" style="background:'+colorOf(s.name)+'">'+ava+'</div>'+
+        '<div class="meta"><div class="nm">'+esc(s.name)+'</div>'+
+        '<div class="tg">'+esc(s.tags||'广播电台')+'</div>'+
+        '<div class="ct">'+(s.country?esc(s.country)+' · ':'')+'♥ '+s.votes+'</div></div>';
+      card.addEventListener('click',function(){play(s,list);});
+      grid.appendChild(card);
+    });
+  }
+
+  function play(s,list){
+    current=s;
+    player.hidden=false;
+    audio.src=s.url;
+    audio.play().then(function(){
+      pname.textContent='📻 '+s.name;psub.textContent=s.tags||'正在播放';
+      document.querySelectorAll('.card').forEach(function(c){
+        var nm=c.querySelector('.nm');
+        c.classList.toggle('playing',!!nm&&nm.textContent===s.name);
+      });
+    }).catch(function(){showToast('该电台流无法播放，已尝试继续加载…');setStatus('无法播放：'+s.name+'，试试其他电台');});
+  }
+  function setPbar(){if(audio.duration&&isFinite(audio.duration)){pbar.style.width=Math.min(100,Math.round(audio.currentTime/audio.duration*100))+'%';}else{pbar.style.width='35%';}}
+  audio.addEventListener('timeupdate',setPbar);
+  audio.addEventListener('playing',function(){pp.textContent='⏸';});
+  audio.addEventListener('pause',function(){pp.textContent='▶';});
+  audio.addEventListener('error',function(){if(current){showToast('播放出错：'+(current.name||'')+'，请换一个电台');}});
+  pp.addEventListener('click',function(){if(audio.paused){audio.play().catch(function(){});}else{audio.pause();}});
+  document.getElementById('vol').addEventListener('input',function(e){audio.volume=e.target.value/100;});
+  audio.volume=0.8;
+
+  var queries={chinese:{lang:'chinese'},china:{cc:'CN'},hot:{},music:{tag:'music'},news:{tag:'news'},fav:{fav:true}};
+  document.getElementById('tabs').addEventListener('click',function(e){
+    var b=e.target.closest('.tab');if(!b)return;
+    document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');});
+    b.classList.add('on');
+    var q=queries[b.dataset.query];
+    if(q&&q.fav){renderFavs();return;}
+    if(q){loadStations(q);}
+  });
+  function renderFavs(){
+    grid.innerHTML='';emptyEl.hidden=false;setStatus('');
+    if(!favs.length){emptyEl.hidden=false;emptyEl.textContent='还没有收藏，点卡片上的收藏可加入';return;}
+    emptyEl.textContent='暂无电台，换个关键词试试。';
+    favs.forEach(function(s,i){
+      var card=document.createElement('div');
+      card.className='card'+(current&&current.url===s.url?' playing':'');
+      var ava=s.favicon&&s.favicon.indexOf('http')===0?'<img src="'+esc(s.favicon)+'" alt="" loading="lazy" referrerpolicy="no-referrer">':esc((s.name||'台').charAt(0));
+      card.innerHTML='<div class="ava" style="background:'+colorOf(s.name)+'">'+ava+'</div>'+
+        '<div class="meta"><div class="nm">'+esc(s.name)+'</div><div class="tg">'+esc(s.tags||'收藏电台')+'</div><div class="ct">♥ 已收藏</div></div>';
+      card.addEventListener('click',function(){play(s,favs);});
+      grid.appendChild(card);
+    });
+    setStatus('共 '+favs.length+' 个收藏电台');
+  }
+  function doSearch(){
+    var v=kw.value.trim();
+    if(!v){loadStations({hot:true});return;}
+    setStatus('搜索“'+v+'”…');emptyEl.hidden=true;grid.innerHTML='';
+    loadStations({kw:v});
+  }
+  kw.addEventListener('keydown',function(e){if(e.key==='Enter'){doSearch();}});
+  document.getElementById('sbtn').addEventListener('click',doSearch);
+
+  // 初始加载：中文电台
+  loadStations(queries.chinese);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://xn--wbvu8bd34f.cn/sitemap.xml
