@@ -162,11 +162,11 @@
   function loadStations(params){
     setStatus('正在加载…');emptyEl.hidden=true;grid.innerHTML='';
     var q='';
-    if(params.kw!==undefined){q='/json/stations/search?name='+encodeURIComponent(params.kw)+'&order=votes&reverse=true&limit=40&hidebroken=true';}
-    else if(params.lang){q='/json/stations/search?language='+encodeURIComponent(params.lang)+'&order=votes&reverse=true&limit=40&hidebroken=true';}
-    else if(params.cc){q='/json/stations/search?countrycode='+encodeURIComponent(params.cc)+'&order=votes&reverse=true&limit=40&hidebroken=true';}
-    else if(params.tag){q='/json/stations/search?tag='+encodeURIComponent(params.tag)+'&order=votes&reverse=true&limit=40&hidebroken=true';}
-    else {q='/json/stations/search?order=votes&reverse=true&limit=40&hidebroken=true';}
+    if(params.kw!==undefined){q='/json/stations/search?name='+encodeURIComponent(params.kw)+'&order=votes&reverse=true&limit=60&hidebroken=true';}
+    else if(params.lang){q='/json/stations/search?language='+encodeURIComponent(params.lang)+'&order=votes&reverse=true&limit=60&hidebroken=true';}
+    else if(params.cc){q='/json/stations/search?countrycode='+encodeURIComponent(params.cc)+'&order=votes&reverse=true&limit=60&hidebroken=true';}
+    else if(params.tag){q='/json/stations/search?tag='+encodeURIComponent(params.tag)+'&order=votes&reverse=true&limit=60&hidebroken=true';}
+    else {q='/json/stations/search?order=votes&reverse=true&limit=60&hidebroken=true';}
     apiFetch(q).then(function(r){
       var list=toRadios(r);
       if(!list.length){emptyEl.hidden=false;setStatus('未找到电台');return;}
@@ -214,13 +214,14 @@
   document.getElementById('vol').addEventListener('input',function(e){audio.volume=e.target.value/100;});
   audio.volume=0.8;
 
-  var queries={chinese:{lang:'chinese'},china:{cc:'CN'},hot:{},music:{tag:'music'},news:{tag:'news'},fav:{fav:true}};
+  var queries={chinese:{lang:'chinese'},china:{cn:true},hot:{},music:{tag:'music'},news:{tag:'news'},fav:{fav:true}};
   document.getElementById('tabs').addEventListener('click',function(e){
     var b=e.target.closest('.tab');if(!b)return;
     document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');});
     b.classList.add('on');
     var q=queries[b.dataset.query];
     if(q&&q.fav){renderFavs();return;}
+    if(q&&q.cn){render(CN_STATIONS);setStatus('内置国内电台 '+CN_STATIONS.length+' 个 · 点击卡片播放');return;}
     if(q){loadStations(q);}
   });
   function renderFavs(){
