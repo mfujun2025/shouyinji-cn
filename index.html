@@ -48,6 +48,13 @@
   .meta .tg{font-size:12px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
   .meta .ct{font-size:11.5px;color:#7dd3fc;margin-top:2px}
   .empty{text-align:center;color:var(--sub);padding:40px 0}
+  .group{margin-top:18px}
+  .group-head{display:flex;align-items:baseline;gap:10px;margin:6px 2px 10px}
+  .g-title{font-size:16px;font-weight:700;color:var(--txt)}
+  .g-count{font-size:12px;color:var(--sub)}
+  .group-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+  .more{margin:12px auto 0;display:block;padding:8px 22px;border:1px solid var(--line);background:var(--panel);color:var(--accent);border-radius:999px;cursor:pointer;font-size:13px}
+  .more:hover{border-color:var(--accent)}
   .player{position:fixed;left:0;right:0;bottom:0;background:rgba(15,23,42,.97);border-top:1px solid var(--line);backdrop-filter:blur(8px);z-index:50;padding:10px 16px 12px}
   .player .in{max-width:1080px;margin:0 auto;display:flex;align-items:center;gap:14px}
   .pbtn{width:46px;height:46px;border-radius:50%;border:none;background:var(--accent);color:#111;font-size:18px;cursor:pointer;flex:none}
@@ -65,7 +72,7 @@
   .tags span{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:3px 10px;font-size:12px;color:var(--sub)}
   .toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:#111827;border:1px solid var(--line);color:var(--txt);padding:9px 18px;border-radius:8px;font-size:13px;z-index:99;opacity:0;transition:opacity .25s;pointer-events:none}
   .toast.show{opacity:1}
-  @media(max-width:640px){ .vol input{width:64px} .grid{grid-template-columns:1fr 1fr} .card{padding:10px} .pinfo .ps{display:none} }
+  @media(max-width:640px){ .vol input{width:64px} .grid,.group-grid{grid-template-columns:1fr 1fr} .card{padding:10px} .pinfo .ps{display:none} }
 </style>
 <script type="application/ld+json">
 {
@@ -170,26 +177,72 @@
     apiFetch(q).then(function(r){
       var list=toRadios(r);
       if(!list.length){emptyEl.hidden=false;setStatus('未找到电台');return;}
-      render(list);setStatus('共 '+list.length+' 个电台 · 点击卡片即可收听');
+      renderGrouped(list);setStatus('共 '+list.length+' 个电台 · 点击卡片即可收听');
     }).catch(function(){
       // API 不可用时的兜底电台
-      render(FALLBACK_STATIONS);
+      renderGrouped(FALLBACK_STATIONS);
       setStatus('在线电台库暂时不可用，已显示内置备用电台');
     });
   }
 
-  function render(list){
+  var PAGE_SIZE=12;
+  var GROUPS=[
+    {key:'tv',label:'电视伴音',match:['tv','cctv']},
+    {key:'news',label:'新闻资讯',match:['news','information','talk','public radio','news talk','新闻','资讯']},
+    {key:'music',label:'音乐电台',match:['music','oldies','golden','classic hits','instrumental','pops','folk','jazz','classical','音乐','金曲','老歌','怀旧','经典','动感','流行']},
+    {key:'finance',label:'财经经济',match:['economics','economic','finance','business','财经','经济','股市']},
+    {key:'traffic',label:'交通广播',match:['traffic','交通']},
+    {key:'story',label:'评书故事',match:['storytelling','story','故事','评书','小说']},
+    {key:'sports',label:'体育赛事',match:['sports','体育']},
+    {key:'other',label:'其他综合',match:[]}
+  ];
+  function labelOf(k){for(var i=0;i<GROUPS.length;i++){if(GROUPS[i].key===k)return GROUPS[i].label;}return k;}
+  function groupOf(s){
+    var t=((s.tags||'')+' '+(s.name||'')).toLowerCase();
+    for(var i=0;i<GROUPS.length-1;i++){
+      var g=GROUPS[i];
+      if(g.match.some(function(m){return t.indexOf(m)>=0;}))return g.key;
+    }
+    return 'other';
+  }
+  function groupList(list){
+    var map={},order=GROUPS.map(function(g){return g.key;});
+    list.forEach(function(s){var k=groupOf(s);(map[k]=map[k]||[]).push(s);});
+    return order.map(function(k){return{key:k,label:labelOf(k),items:map[k]||[]};}).filter(function(g){return g.items.length;});
+  }
+  function buildCard(s,list){
+    var card=document.createElement('div');
+    card.className='card'+(current&&current.url===s.url?' playing':'');
+    var ava=s.favicon&&s.favicon.indexOf('http')===0?'<img src="'+esc(s.favicon)+'" alt="" loading="lazy" referrerpolicy="no-referrer">':esc((s.name||'台').charAt(0));
+    card.innerHTML='<div class="ava" style="background:'+colorOf(s.name)+'">'+ava+'</div>'+
+      '<div class="meta"><div class="nm">'+esc(s.name)+'</div>'+
+      '<div class="tg">'+esc(s.tags||'广播电台')+'</div>'+
+      '<div class="ct">'+(s.country?esc(s.country)+' · ':'')+'♥ '+s.votes+'</div></div>';
+    card.addEventListener('click',function(){play(s,list);});
+    return card;
+  }
+  function renderGrouped(list){
     grid.innerHTML='';
-    list.forEach(function(s,i){
-      var card=document.createElement('div');
-      card.className='card'+(current&&current.url===s.url?' playing':'');
-      var ava=s.favicon&&s.favicon.indexOf('http')===0?'<img src="'+esc(s.favicon)+'" alt="" loading="lazy" referrerpolicy="no-referrer">':esc((s.name||'台').charAt(0));
-      card.innerHTML='<div class="ava" style="background:'+colorOf(s.name)+'">'+ava+'</div>'+
-        '<div class="meta"><div class="nm">'+esc(s.name)+'</div>'+
-        '<div class="tg">'+esc(s.tags||'广播电台')+'</div>'+
-        '<div class="ct">'+(s.country?esc(s.country)+' · ':'')+'♥ '+s.votes+'</div></div>';
-      card.addEventListener('click',function(){play(s,list);});
-      grid.appendChild(card);
+    if(!list.length){emptyEl.hidden=false;return;}
+    var groups=groupList(list);
+    groups.forEach(function(g){
+      var block=document.createElement('div');block.className='group';
+      var head=document.createElement('div');head.className='group-head';
+      head.innerHTML='<span class="g-title">'+esc(g.label)+'</span><span class="g-count">'+g.items.length+' 个电台</span>';
+      var glist=document.createElement('div');glist.className='group-grid';
+      var shown=Math.min(PAGE_SIZE,g.items.length);
+      g.items.slice(0,shown).forEach(function(s){glist.appendChild(buildCard(s,list));});
+      block.appendChild(head);block.appendChild(glist);
+      if(g.items.length>shown){
+        var btn=document.createElement('button');btn.className='more';
+        btn.textContent='展开剩余 '+(g.items.length-shown)+' 个';
+        btn.addEventListener('click',function(){
+          g.items.slice(shown).forEach(function(s){glist.appendChild(buildCard(s,list));});
+          btn.remove();
+        });
+        block.appendChild(btn);
+      }
+      grid.appendChild(block);
     });
   }
 
@@ -221,22 +274,14 @@
     b.classList.add('on');
     var q=queries[b.dataset.query];
     if(q&&q.fav){renderFavs();return;}
-    if(q&&q.cn){render(CN_STATIONS);setStatus('内置国内电台 '+CN_STATIONS.length+' 个 · 点击卡片播放');return;}
+    if(q&&q.cn){renderGrouped(CN_STATIONS);setStatus('内置国内电台 '+CN_STATIONS.length+' 个 · 分类浏览，点击卡片播放');return;}
     if(q){loadStations(q);}
   });
   function renderFavs(){
     grid.innerHTML='';emptyEl.hidden=false;setStatus('');
     if(!favs.length){emptyEl.hidden=false;emptyEl.textContent='还没有收藏，点卡片上的收藏可加入';return;}
     emptyEl.textContent='暂无电台，换个关键词试试。';
-    favs.forEach(function(s,i){
-      var card=document.createElement('div');
-      card.className='card'+(current&&current.url===s.url?' playing':'');
-      var ava=s.favicon&&s.favicon.indexOf('http')===0?'<img src="'+esc(s.favicon)+'" alt="" loading="lazy" referrerpolicy="no-referrer">':esc((s.name||'台').charAt(0));
-      card.innerHTML='<div class="ava" style="background:'+colorOf(s.name)+'">'+ava+'</div>'+
-        '<div class="meta"><div class="nm">'+esc(s.name)+'</div><div class="tg">'+esc(s.tags||'收藏电台')+'</div><div class="ct">♥ 已收藏</div></div>';
-      card.addEventListener('click',function(){play(s,favs);});
-      grid.appendChild(card);
-    });
+    favs.forEach(function(s){grid.appendChild(buildCard(s,favs));});
     setStatus('共 '+favs.length+' 个收藏电台');
   }
   function doSearch(){
